@@ -371,7 +371,7 @@
     $('grid').innerHTML = list.map(i=>{
       const idx = INSTITUTOS.indexOf(i);
       const on = compareSet.has(idx);
-      return `<div class="ic ${on?'cmp':''}" data-idx="${idx}">
+      return `<div class="ic" data-idx="${idx}">
         <div class="head">
           <div class="crest">${i.crest}</div>
           <div><div class="uf">${i.uf}${i.remun!=='—'?' · '+i.remun:''}</div><h3>${i.nome}</h3></div>
@@ -385,7 +385,6 @@
         <div class="blk"><div class="t">Cargos TAE em maior carência</div><ul class="cargos">${i.cargos.map(cargoLi).join('')}</ul></div>
         <div class="blk"><div class="t">Perspectiva</div><div class="persp">${i.persp}</div></div>
         <div class="foot">
-          <button class="cmpbtn" data-act="cmp">${on?'✓ Comparando':'+ Comparar'}</button>
           <button class="pick" data-act="pick">Quero o ${i.sigla} →</button>
         </div>
       </div>`;
