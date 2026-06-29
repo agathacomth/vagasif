@@ -279,6 +279,7 @@
   const WHATSAPP_GROUP = "https://sndflw.com/i/D44WGy8IPL92V6WPPX2b"; // link de entrada no grupo
   const AULA_LINK = "https://www.youtube.com/live/Wir0ZwIovcM";        // aula com mais informações
   const WHATS_COMERCIAL = "https://api.whatsapp.com/send?phone=5511953432311"; // WhatsApp comercial
+  const SHEET_URL = "https://script.google.com/macros/s/AKfycbwQMCghrSWwJCcqyWk_LQ0-HQJKXuxyTKyH2ur4KJd_lo9E2jo9luxJCAD6vOE0yizzNg/exec"; // Google Planilha (ativo)
   /* ========================================================= */
 
   // ---- Dados dos institutos (extraídos dos relatórios) ----
@@ -452,8 +453,11 @@
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ show('err','Confere o e-mail, parece incompleto.'); return; }
     if(whats.replace(/\D/g,'').length<10){ show('err','Confere o WhatsApp com DDD.'); return; }
     const btn=form.querySelector('button.cta'); btn.disabled=true; btn.textContent='Liberando...';
+    const dados={ instituto: sel.value, nome, email, whatsapp: whats, origem: location.href };
     try{
-      if(!FORM_ENDPOINT.includes('SEU_ID_AQUI')){
+      if(SHEET_URL && !SHEET_URL.includes('COLE_AQUI')){
+        await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(dados)});
+      } else if(!FORM_ENDPOINT.includes('SEU_ID_AQUI')){
         const res=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Accept':'application/json'},body:new FormData(form)});
         if(!res.ok) throw new Error('falha');
       }
