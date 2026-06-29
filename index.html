@@ -294,7 +294,7 @@
       prof:135, tae:84, total:219, totalLbl:"Potencial", remun:"até R$ 13.288,85",
       banca:"Banca FAURGS definida · edital iminente (2º sem. 2026)",
       cargos:[["Técnico em Assuntos Educacionais",8],["Auxiliar de Biblioteca",7],["Auxiliar em Administração",6],["Assistente em Administração",5],["Assistente de Laboratório",5],["Assistente de Aluno",4],["Técnico de Laboratório (Área)",3],["Auxiliar de Enfermagem",2]],
-      persp:"Banca FAURGS contratada e edital iminente (2º semestre/2026). Professor: 91 vazias + 44 previstas. TAE: 56 vazias + 28 previstas/autorizadas. Forte possibilidade de uso do cadastro de reserva ao longo do certame. Remuneração até R$ 13.288,85." },
+      persp:"Banca FAURGS contratada e edital iminente (2º semestre/2026). Professor: 91 vazias + 44 previstas. TAE: 56 vazias + 28 previstas/autorizadas. Forte possibilidade de uso do cadastro de reserva ao longo do certame." },
 
     { uf:"BA", sigla:"IFBA", crest:"IFBA", nome:"IF da Bahia",
       prof:146, tae:136, total:282, totalLbl:"Vagas vazias", remun:"—",
@@ -374,7 +374,7 @@
       return `<div class="ic" data-idx="${idx}">
         <div class="head">
           <div class="crest">${i.crest}</div>
-          <div><div class="uf">${i.uf}${i.remun!=='—'?' · '+i.remun:''}</div><h3>${i.nome}</h3></div>
+          <div><div class="uf">${i.uf}</div><h3>${i.nome}</h3></div>
         </div>
         <div class="banca">${i.banca}</div>
         <div class="nums">
@@ -423,7 +423,6 @@
       ['Professor (EBTT)', c=>`<span class="big">${c.prof}</span>`],
       ['TAE', c=>`<span class="big">${c.tae}</span>`],
       ['Total no radar', c=>`<span class="tt">${c.total}</span><br><small>${c.totalLbl}</small>`],
-      ['Remuneração', c=>c.remun],
       ['Banca / status', c=>c.banca],
     ];
     let html='<div class="cmptable-scroll"><table class="cmp"><thead><tr><th>Critério</th>'+cols.map(c=>`<th>${c.sigla}</th>`).join('')+'</tr></thead><tbody>';
