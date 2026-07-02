@@ -147,6 +147,16 @@
     h2.sec{font-size:25px}
     .grid{grid-template-columns:1fr}
   }
+  /* --- Expansao Novo PAC --- */
+  .ic .novas{margin-top:11px;background:#e8f3ec;border:1px solid #bfe3cd;border-left:3px solid #1f6b46;border-radius:8px;padding:8px 11px;font-size:12px;color:#1f6b46;font-weight:600;line-height:1.4}
+  .expbanner{background:linear-gradient(160deg,#0C3D64,#0e2c43);color:#fff;border-radius:16px;padding:30px 30px 26px;box-shadow:0 10px 30px rgba(12,61,100,.15)}
+  .expbanner .tag{display:inline-block;background:#FF751F;color:#fff;font-weight:800;font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:5px 13px;border-radius:6px}
+  .expbanner h3{color:#fff;font-size:23px;font-weight:900;margin:12px 0 4px;line-height:1.15}
+  .expbanner p{color:#cfdde8;font-size:14px;margin-bottom:16px;max-width:760px}
+  .expbanner .exgrid{display:flex;flex-wrap:wrap;gap:12px}
+  .expbanner .ex{flex:1;min-width:110px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:14px}
+  .expbanner .ex .n{font-size:25px;font-weight:900;color:#FF8a42;line-height:1}
+  .expbanner .ex .l{font-size:10.5px;font-weight:600;color:#bccdda;text-transform:uppercase;letter-spacing:.03em;margin-top:5px}
 </style>
 </head>
 <body>
@@ -154,15 +164,15 @@
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="badge"><span class="dot"></span> Pré-edital · Rede Federal 2026</div>
+      <div class="badge"><span class="dot"></span> Novo PAC · Expansão 2026</div>
       <h1>Os Institutos Federais vão abrir <em>milhares de vagas</em> em 2026</h1>
-      <p class="sub">Mapeamos a previsão de vagas para <b>Professor (EBTT)</b> e <b>TAE</b> em 10 institutos de RJ, SC, BA e MG — com cargos em carência, perspectivas de edital e comparativo entre eles. Libere o panorama completo:</p>
+      <p class="sub">O Governo acaba de autorizar a maior expansão da Rede Federal em anos: <b>3.552 novos postos</b>, sendo <b>1.665 de professor</b>. Mapeamos vaga por vaga em 10 institutos de RJ, SC, BA e MG — com cargos em carência, perspectivas de edital e comparativo. Libere o panorama completo:</p>
       <div class="stats">
         <div><div class="n">10</div><div class="l">Institutos mapeados</div></div>
         <div><div class="n">4</div><div class="l">Estados (RJ·SC·BA·MG)</div></div>
         <div><div class="n"><small>+</small>1.800</div><div class="l">Vagas no radar</div></div>
       </div>
-      <p class="disc">Números são previsão/potencial (vagas vazias no quadro + autorizações da Portaria MEC 252/2026 + projeções de edital). A oferta final em edital pode variar.</p>
+      <p class="disc">Números combinam vagas vazias no quadro + autorizações das Portarias MEC/MGI (252/2026 e Conjunta 41/2026) + projeções de edital. A oferta final em edital pode variar.</p>
     </div>
 
     <div class="card" id="gate">
@@ -200,6 +210,24 @@
   <section style="padding-bottom:0">
     <div class="wrap">
       <div class="unlockbar">✅ Acesso liberado! Explore os institutos, compare e veja as perspectivas de edital abaixo.</div>
+    </div>
+  </section>
+
+  <section style="padding-top:34px;padding-bottom:0">
+    <div class="wrap">
+      <div class="expbanner">
+        <span class="tag">● Novo PAC · Expansão 2026</span>
+        <h3>A maior expansão da Rede Federal em anos já foi autorizada</h3>
+        <p>O Governo Federal (MEC + MGI) autorizou o maior reforço de pessoal dos últimos anos — o combustível concreto dos próximos concursos de professor e técnico dos IFs.</p>
+        <div class="exgrid">
+          <div class="ex"><div class="n">3.552</div><div class="l">Novos postos</div></div>
+          <div class="ex"><div class="n">1.665</div><div class="l">Professores EBTT</div></div>
+          <div class="ex"><div class="n">39</div><div class="l">Institutos</div></div>
+          <div class="ex"><div class="n">111</div><div class="l">Novos campi</div></div>
+          <div class="ex"><div class="n">R$2,7bi</div><div class="l">Investimento</div></div>
+          <div class="ex"><div class="n">38</div><div class="l">Campi já autorizados</div></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -345,6 +373,18 @@
       persp:"Apresenta um quadro mais estável, com carências focadas em Assistentes em Administração e cargos de nível superior. 5 novos cargos autorizados (MEC)." },
   ];
 
+  const NOVAS = {
+    "IFRJ":"90 professores · 192 postos",
+    "IFSC":"15 professores · 32 postos",
+    "IFBA":"60 professores · 128 postos",
+    "IF Baiano":"60 professores · 128 postos",
+    "IFMG":"60 professores · 128 postos",
+    "IFNMG":"15 professores · 32 postos",
+    "IF Sudeste MG":"30 professores · 64 postos",
+    "IFSULDEMINAS":"15 professores · 32 postos",
+    "IFTM":"15 professores · 32 postos",
+  };
+
   const $ = id => document.getElementById(id);
 
   // ---- popular o select do gate ----
@@ -377,6 +417,7 @@
           <div><div class="uf">${i.uf}</div><h3>${i.nome}</h3></div>
         </div>
         <div class="banca">${i.banca}</div>
+        ${NOVAS[i.sigla]?`<div class="novas">🆕 Autorizado agora (Portaria 41/2026): <b>${NOVAS[i.sigla]}</b></div>`:''}
         <div class="nums">
           <div class="nbox"><div class="big">${i.prof}</div><div class="lbl">Professor</div></div>
           <div class="nbox"><div class="big">${i.tae}</div><div class="lbl">TAE</div></div>
