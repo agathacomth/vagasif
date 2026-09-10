@@ -118,21 +118,36 @@ window.DQ_AULA = (function(){
 <script>
 /* ===== SÓ NESTA CÓPIA DE TESTE =====
    Acrescente ?min=NN no fim do endereço para simular a entrada em qualquer
-   minuto da aula, sem precisar esperar o relógio.
-   Exemplos:  index.html?min=0    entra no começo
-              index.html?min=66   entra no minuto 66
-              index.html?min=93   entra bem na hora do pitch
-   Sem o ?min, usa a hora de verdade do computador. */
+   minuto da aula, sem esperar o relógio.
+     ?min=0    entra no começo
+     ?min=66   entra no minuto 66
+     ?min=94   entra com a oferta já aberta
+   Sem o ?min, usa a hora de verdade do computador.
+   O painel no canto mostra o que o player está fazendo. */
 (function(){
   var m = (location.search.match(/[?&]min=(\d+)/)||[])[1];
-  if (m == null) return;
-  var seg = parseInt(m,10) * 60;
-  var t0  = Date.now();
-  var ab  = new Date(Date.now() - seg*1000);
-  window.DQ_AULA.decorridos = function(){ return seg + (Date.now()-t0)/1000; };
-  window.DQ_AULA.jaComecou  = function(){ return true; };
-  window.DQ_AULA.abertura   = function(){ return ab; };
-  console.log('[TESTE] simulando entrada no minuto ' + m);
+  if (m != null){
+    var seg = parseInt(m,10) * 60, t0 = Date.now(), ab = new Date(Date.now() - seg*1000);
+    window.DQ_AULA.decorridos = function(){ return seg + (Date.now()-t0)/1000; };
+    window.DQ_AULA.jaComecou  = function(){ return true; };
+    window.DQ_AULA.abertura   = function(){ return ab; };
+  }
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;z-index:99999;left:10px;bottom:10px;background:#111;color:#0f0;'
+    + 'font:12px/1.5 monospace;padding:10px 12px;border-radius:8px;max-width:280px;opacity:.92';
+  document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(d); });
+  setInterval(function(){
+    var p = document.getElementById('vid-6a85ca998eaf0dd6e3cc358e');
+    var alvo = Math.floor(window.DQ_AULA.decorridos());
+    var atual = (p && typeof p.currentTime === 'number') ? Math.floor(p.currentTime) : null;
+    function mmss(x){ return Math.floor(x/60) + 'min' + ('0'+(x%60)).slice(-2); }
+    d.innerHTML = '<b>PAINEL DE TESTE</b><br>'
+      + 'deveria estar em: ' + mmss(alvo) + '<br>'
+      + 'vídeo está em: ' + (atual===null ? '(player carregando)' : mmss(atual)) + '<br>'
+      + (atual===null ? '' : (Math.abs(atual-alvo) <= 15
+          ? '<span style="color:#6f6">✓ SINCRONIZADO</span>'
+          : '<span style="color:#f66">✗ fora de sincronia</span>'));
+  }, 700);
 })();
 </script>
 <!-- Vturb / ConverteAI: prefetch dos domínios (performance do player) -->
@@ -1575,25 +1590,36 @@ function sincronizarVideo(){
     return;
   }
 
-  function player(){ var p = document.getElementById(VTURB_ID); return (p && typeof p.seek === 'function') ? p : null; }
-  function posicionar(){
-    var p = player(); if(!p) return;
-    var alvo = Math.floor(A.decorridos());
-    if (alvo < 5) return;
-    try{ p.seek(alvo); }catch(e){}
-  }
+  /* Na primeira visita o player ainda está carregando quando a página pede o
+     seek, e ele engole o pedido: por isso o vídeo começava do zero na primeira
+     vez e só acertava na segunda, com tudo em cache.
+     A saída é conferir. O player expõe currentTime, então pedimos o seek e
+     lemos de volta. Enquanto o vídeo não estiver no ponto, pedimos de novo.
+     Assim que ele confirma duas leituras seguidas no lugar certo, soltamos o
+     controle, e quem quiser voltar um trecho consegue. */
+  var t0 = Date.now(), apareceu = 0;
+  var laco = setInterval(function(){
+    if (Date.now() - t0 > 90000){ clearInterval(laco); return; }   // player nunca subiu: desiste
 
-  var espera = setInterval(function(){
-    if (!player()) return;
-    clearInterval(espera);
-    posicionar();
-    if (Math.floor(A.decorridos()) >= 5){
-      setTimeout(posicionar, 3000);
-      setTimeout(posicionar, 8000);
-      setTimeout(posicionar, 18000);
+    var p = document.getElementById(VTURB_ID);
+    if (!p || typeof p.seek !== 'function') return;                // ainda carregando
+    if (!apareceu) apareceu = Date.now();
+
+    /* Vigiamos por 30 segundos a partir do momento em que o player aparece.
+       É o tempo de o vídeo carregar e de o "Continuar Assistindo" fazer o que
+       tem de fazer. Passados os 30 segundos soltamos o controle, para quem
+       quiser voltar um trecho conseguir. */
+    if (Date.now() - apareceu > 30000){ clearInterval(laco); return; }
+
+    var alvo = Math.floor(A.decorridos());
+    if (alvo < 5){ clearInterval(laco); return; }                  // entrou no começo
+    if (p.duration && alvo > p.duration - 5) alvo = Math.floor(p.duration - 5);
+
+    var atual = (typeof p.currentTime === 'number') ? p.currentTime : null;
+    if (atual === null || Math.abs(atual - alvo) > 15){
+      try{ p.seek(alvo); }catch(e){}
     }
-  }, 400);
-  setTimeout(function(){ clearInterval(espera); }, 30000);   // desiste depois de 30 segundos
+  }, 1000);
 }
 
 var saudado=false;
